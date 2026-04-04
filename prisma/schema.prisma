@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  password  String
+  name      String
+  role      Role      @relation(fields: [roleId], references: [id])
+  roleId    Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  
+  transactions Transaction[]
+
+  @@map("users")
+}
+
+model Role {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  users User[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("permissions")
+}
+
+model Transaction {
+  id            Int       @id @default(autoincrement())
+  type          String
+  category      String
+  amount        Float
+  description   String?
+  date          DateTime
+  userId        Int
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([date])
+  @@index([deletedAt])
+  @@map("transactions")
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  action    String
+  entity    String
+  entityId  Int
+  changes   String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
