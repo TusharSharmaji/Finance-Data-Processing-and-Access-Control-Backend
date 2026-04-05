@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Finance Dashboard Auth</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f4f6f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      width: 300px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+    }
+
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .output {
+      margin-top: 15px;
+      font-size: 12px;
+      word-wrap: break-word;
+      background: #eee;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Login</h2>
+
+  <input type="email" id="email" placeholder="Enter email" />
+  <input type="password" id="password" placeholder="Enter password" />
+
+  <button onclick="login()">Login</button>
+
+  <div class="output" id="result">Response will appear here...</div>
+</div>
+
+<script>
+  async function login() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    try {
+      const response = await fetch("http://localhost:3000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+
+      document.getElementById("result").innerText =
+        JSON.stringify(data, null, 2);
+
+    } catch (error) {
+      document.getElementById("result").innerText =
+        "Error: " + error.message;
+    }
+  }
+</script>
+
+</body>
+</html>
